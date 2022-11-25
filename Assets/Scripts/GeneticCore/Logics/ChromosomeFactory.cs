@@ -6,7 +6,8 @@ namespace GeneticCore.Logics
 {
     public static class ChromosomeFactory
     {
-        public static (ChromosomeModel offSpringA, ChromosomeModel offSpringB) CreateOffSpringChromosomes(ChromosomeModel parentA, ChromosomeModel parentB, float crossOverOffset = 0.5f)
+        public static (ChromosomeModel offSpringA, ChromosomeModel offSpringB) CreateOffSpringChromosomes(
+            ChromosomeModel parentA, ChromosomeModel parentB, float crossOverOffset = 0.5f)
         {
             var genomesOfParentA = parentA.Data.Values.ToList();
             var genomesOfParentB = parentB.Data.Values.ToList();
@@ -16,7 +17,7 @@ namespace GeneticCore.Logics
             }
 
             var sizeOfChromosomes = genomesOfParentA.Count;
-            var crossOverPoint = (int) (crossOverOffset * sizeOfChromosomes);
+            var crossOverPoint = (int)(crossOverOffset * sizeOfChromosomes);
 
             var genomesOfChildA = new List<GenomeModel>();
             var genomesOfChildB = new List<GenomeModel>();
@@ -37,6 +38,21 @@ namespace GeneticCore.Logics
             var childB = new ChromosomeModel(genomesOfChildB);
             // Children are called offSprings too
             return (childA, childB);
+        }
+
+        public static void MutateChromosome(this ChromosomeModel chromosomeModel, int startIndex,
+            int endIndex)
+        {
+            int index = 0;
+            foreach (var keyPairValues in chromosomeModel.Data)
+            {
+                if (index >= startIndex && index <= endIndex)
+                {
+                    keyPairValues.Value.Value = 1 - keyPairValues.Value.Value;
+                }
+
+                index += 1;
+            }
         }
 
         private static GenomeModel CloneGenome(GenomeModel genome)
