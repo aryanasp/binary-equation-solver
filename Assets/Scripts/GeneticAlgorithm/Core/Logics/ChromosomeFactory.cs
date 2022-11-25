@@ -2,10 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GeneticCore.Logics
+namespace GeneticAlgorithm.Core
 {
     public static class ChromosomeFactory
     {
+        public static ChromosomeModel CreateRandomChromosome(List<string> tags)
+        {
+            List<GenomeModel> genes = new List<GenomeModel>();
+            var randomGenerator = new Random();
+            for (int i = 0; i < tags.Count; i++)
+            {
+                // Generate a gene with value 0 or 1 with passed tag
+                genes.Add(new GenomeModel(tags[i], (short)randomGenerator.Next(0, 2)));
+            }
+            return new ChromosomeModel(genes);
+        }
+        
         public static (ChromosomeModel offSpringA, ChromosomeModel offSpringB) CreateOffSpringChromosomes(
             ChromosomeModel parentA, ChromosomeModel parentB, float crossOverOffset = 0.5f)
         {
@@ -39,19 +51,21 @@ namespace GeneticCore.Logics
             // Children are called offSprings too
             return (childA, childB);
         }
-
-        public static void MutateChromosome(this ChromosomeModel chromosomeModel, int startIndex,
-            int endIndex)
+        
+        ///<summary>
+        ///<para> both startIndex and endIndex are inclusive. </para>
+        ///</summary>
+        public static void MutateChromosome(this ChromosomeModel chromosomeModel,
+            float genomeMutationChance)
         {
-            int index = 0;
+            var random = new Random();
             foreach (var keyPairValues in chromosomeModel.Data)
             {
-                if (index >= startIndex && index <= endIndex)
+                var chanceToMutate = random.NextDouble();
+                if (chanceToMutate > genomeMutationChance)
                 {
                     keyPairValues.Value.Value = (short)(1 - keyPairValues.Value.Value);
                 }
-
-                index += 1;
             }
         }
 
