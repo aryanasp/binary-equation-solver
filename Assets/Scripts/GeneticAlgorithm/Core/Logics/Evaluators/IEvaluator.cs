@@ -2,6 +2,6 @@
 {
     public interface IEvaluator
     {
-        ChromosomeModel EvaluateChromosome(ChromosomeModel chromosomeModel);
+        int EvaluateChromosome(ChromosomeModel chromosomeModel);
     }
 }
