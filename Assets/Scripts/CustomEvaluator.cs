@@ -15,5 +15,10 @@ namespace DefaultNamespace
             var w = data[3].Value;
             return 0 - (int)Math.Abs((17) + (Math.Pow(x, 3)) + (Math.Pow(x, 3) * Math.Pow(y, 2)) - (2 * Math.Pow(y, 3) * Math.Pow(z, 2)) - (19 * w * Math.Pow(x, 2)));
         }
+
+        public int GetOptimumValueToStopSooner()
+        {
+            return 0;
+        }
     }
 }

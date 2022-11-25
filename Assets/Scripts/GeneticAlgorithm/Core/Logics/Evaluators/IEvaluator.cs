@@ -3,5 +3,6 @@
     public interface IEvaluator
     {
         int EvaluateChromosome(ChromosomeModel chromosomeModel);
+        int GetOptimumValueToStopSooner();
     }
 }

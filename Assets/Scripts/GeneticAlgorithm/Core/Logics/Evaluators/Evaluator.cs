@@ -16,5 +16,10 @@ namespace GeneticAlgorithm.Core.Evaluators
             var score = random.Next(100);
             return score;
         }
+
+        public int GetOptimumValueToStopSooner()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

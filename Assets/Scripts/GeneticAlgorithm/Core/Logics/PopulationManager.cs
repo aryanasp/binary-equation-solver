@@ -99,7 +99,7 @@ namespace GeneticAlgorithm.Core
                 var children = CrossOver(selects);
                 var result = Mutate(children);
                 var evaluatedChildren = EvaluateFitnessFunction(result);
-                if (AllNewChildrenWereInDeadPool(evaluatedChildren))
+                if (AllNewChildrenWereInDeadPool(evaluatedChildren) || IsTargetTouched())
                 {
                     break;
                 }
@@ -112,6 +112,11 @@ namespace GeneticAlgorithm.Core
             }
 
             return _population.Max;
+        }
+
+        private bool IsTargetTouched()
+        {
+            return (_population.Select(item => item.Score == Container.EvaluatorController.GetOptimumValueToStopSooner()).GetEnumerator().Current);
         }
 
         private bool AllNewChildrenWereInDeadPool(List<ChromosomeModel> newGeneration)

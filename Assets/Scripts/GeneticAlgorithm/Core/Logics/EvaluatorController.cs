@@ -21,5 +21,10 @@ namespace GeneticAlgorithm.Core
             chromosomeModel.Score = Evaluator.EvaluateChromosome(chromosomeModel);
             return chromosomeModel;
         }
+
+        public int GetOptimumValueToStopSooner()
+        {
+            return Evaluator.GetOptimumValueToStopSooner();
+        }
     }
 }
