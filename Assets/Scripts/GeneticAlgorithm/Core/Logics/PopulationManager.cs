@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace GeneticAlgorithm.Core
@@ -9,8 +10,12 @@ namespace GeneticAlgorithm.Core
         private SortedSet<ChromosomeModel> _population;
         private HashSet<ChromosomeModel> _deadChromosomesPool;
         private int _societySize;
+        
         private int _pairFactor = 1;
+        private float _crossOverOfset = 0.5f;
+        
         private float _mutationChance = 0.1f;
+        
         private float _genomeMutateChance = 0.5f;
         public PopulationManager(List<string> tags, int peopleCount)
         {
@@ -45,7 +50,7 @@ namespace GeneticAlgorithm.Core
         {
             if (mutationChance >= 1f)
             {
-                throw new Exception("[PopulationManager]: Chance cant be more than 100%.");
+                throw new Exception("[PopulationManager]: Chance Cant Be More Than 100%.");
             }
 
             _mutationChance = mutationChance;
@@ -56,10 +61,21 @@ namespace GeneticAlgorithm.Core
         {
             if (genomeMutationChance >= 1f)
             {
-                throw new Exception("[PopulationManager]: Chance cant be more than 100%.");
+                throw new Exception("[PopulationManager]: Chance Cant Be More Than 100%.");
             }
 
             _genomeMutateChance = genomeMutationChance;
+            return this;
+        }
+
+        public PopulationManager SetCrossOverOffset(float crossOverOffset)
+        {
+            if (crossOverOffset >= 1f)
+            {
+                throw new Exception("[PopulationManager]: Offset Cant Be More Than 100%.");
+            }
+
+            _crossOverOfset = crossOverOffset;
             return this;
         }
         
@@ -142,7 +158,7 @@ namespace GeneticAlgorithm.Core
             var children = new List<ChromosomeModel>();
             foreach (var tuple in selects)
             {
-                var (childA, childB) = ChromosomeFactory.CreateOffSpringChromosomes(tuple.Item1, tuple.Item2);
+                var (childA, childB) = ChromosomeFactory.CreateOffSpringChromosomes(tuple.Item1, tuple.Item2, _crossOverOfset);
                 children.Add(childA);
                 children.Add(childB);
             }
@@ -152,7 +168,28 @@ namespace GeneticAlgorithm.Core
 
         private List<Tuple<ChromosomeModel, ChromosomeModel>> Select()
         {
-            throw new NotImplementedException();
+            var newSortedList = ShallowClonePopulation();
+            var outputList = new List<Tuple<ChromosomeModel, ChromosomeModel>>();
+            for (int i = 0; i < _pairFactor; i++)
+            {
+                var parent1 = newSortedList.Max;
+                newSortedList.Remove(newSortedList.Max);
+                var parent2 = newSortedList.Max;
+                newSortedList.Remove(newSortedList.Max);
+                var tuple = new Tuple<ChromosomeModel, ChromosomeModel>(parent1, parent2);
+                outputList.Add(tuple);
+            }
+            return outputList;
+        }
+
+        private SortedSet<ChromosomeModel> ShallowClonePopulation()
+        {
+            var newSortedList = new SortedSet<ChromosomeModel>();
+            foreach (var chromosomeModel in newSortedList)
+            {
+                newSortedList.Add(chromosomeModel);
+            }
+            return newSortedList;
         }
     }
 }
