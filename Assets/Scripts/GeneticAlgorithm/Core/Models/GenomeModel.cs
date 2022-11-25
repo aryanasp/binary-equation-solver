@@ -3,12 +3,10 @@ namespace GeneticAlgorithm.Core
 {
     public class GenomeModel
     {
-        public string Tag;
         public short Value;
         
-        public GenomeModel(string tag, short value)
+        public GenomeModel(short value)
         {
-            Tag = tag;
             Value = value;
         }
 

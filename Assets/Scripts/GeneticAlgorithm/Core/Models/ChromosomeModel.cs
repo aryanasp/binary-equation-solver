@@ -6,15 +6,15 @@ namespace GeneticAlgorithm.Core
 {
     public class ChromosomeModel : IComparer<ChromosomeModel>
     {
-        public readonly Dictionary<string, GenomeModel> Data;
+        public readonly List<GenomeModel> Data;
         public int Score;
 
         public ChromosomeModel(List<GenomeModel> genomeModels)
         {
-            Data = new Dictionary<string, GenomeModel>();
+            Data = new List<GenomeModel>();
             foreach (var genome in genomeModels)
             {
-                Data[genome.Tag] = genome;
+                Data.Add(genome);
             }
         }
 
@@ -28,7 +28,7 @@ namespace GeneticAlgorithm.Core
             var line = "";
             foreach (var pair in Data)
             {
-                line += $"{pair.Key}: {pair.Value.Value}, ";
+                line += $"{pair.Value}, ";
             }
             Debug.Log(line);
         }

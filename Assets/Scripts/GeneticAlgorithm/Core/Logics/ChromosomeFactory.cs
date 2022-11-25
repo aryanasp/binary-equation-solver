@@ -13,7 +13,7 @@ namespace GeneticAlgorithm.Core
             for (int i = 0; i < tags.Count; i++)
             {
                 // Generate a gene with value 0 or 1 with passed tag
-                genes.Add(new GenomeModel(tags[i], (short)randomGenerator.Next(0, 2)));
+                genes.Add(new GenomeModel((short)randomGenerator.Next(0, 2)));
             }
             return new ChromosomeModel(genes);
         }
@@ -21,8 +21,8 @@ namespace GeneticAlgorithm.Core
         public static (ChromosomeModel offSpringA, ChromosomeModel offSpringB) CreateOffSpringChromosomes(
             ChromosomeModel parentA, ChromosomeModel parentB, float crossOverOffset = 0.5f)
         {
-            var genomesOfParentA = parentA.Data.Values.ToList();
-            var genomesOfParentB = parentB.Data.Values.ToList();
+            var genomesOfParentA = parentA.Data;
+            var genomesOfParentB = parentB.Data;
             if (genomesOfParentA.Count != genomesOfParentB.Count)
             {
                 throw new Exception("[ChromosomeFactory]: Size Of Chromosomes Are Not Equal.");
@@ -59,19 +59,19 @@ namespace GeneticAlgorithm.Core
             float genomeMutationChance)
         {
             var random = new Random();
-            foreach (var keyPairValues in chromosomeModel.Data)
+            foreach (var gene in chromosomeModel.Data)
             {
                 var chanceToMutate = random.NextDouble();
                 if (chanceToMutate > genomeMutationChance)
                 {
-                    keyPairValues.Value.Value = (short)(1 - keyPairValues.Value.Value);
+                    gene.Value = (short)(1 - gene.Value);
                 }
             }
         }
 
         private static GenomeModel CloneGenome(GenomeModel genome)
         {
-            return new GenomeModel(genome.Tag, genome.Value);
+            return new GenomeModel(genome.Value);
         }
     }
 }

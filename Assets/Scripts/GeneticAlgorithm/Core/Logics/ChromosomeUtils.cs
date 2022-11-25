@@ -7,7 +7,7 @@ namespace GeneticAlgorithm.Core
     {
         public static List<short> ExportAsList(this ChromosomeModel chromosomeModel)
         {
-            return chromosomeModel.Data.Select(pair => pair.Value.Value).ToList();
+            return chromosomeModel.Data.Select(pair => pair.Value).ToList();
         }
 
         public static bool AreEqual(ChromosomeModel chromosomeA, ChromosomeModel chromosomeB)

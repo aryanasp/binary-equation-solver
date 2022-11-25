@@ -12,10 +12,8 @@ namespace GeneticAlgorithm.Core
         private int _societySize;
         
         private int _pairFactor = 1;
-        private float _crossOverOfset = 0.5f;
-        
+        private float _crossOverOffset = 0.5f;
         private float _mutationChance = 0.1f;
-        
         private float _genomeMutateChance = 0.5f;
         public PopulationManager(List<string> tags, int peopleCount)
         {
@@ -75,7 +73,7 @@ namespace GeneticAlgorithm.Core
                 throw new Exception("[PopulationManager]: Offset Cant Be More Than 100%.");
             }
 
-            _crossOverOfset = crossOverOffset;
+            _crossOverOffset = crossOverOffset;
             return this;
         }
         
@@ -158,7 +156,7 @@ namespace GeneticAlgorithm.Core
             var children = new List<ChromosomeModel>();
             foreach (var tuple in selects)
             {
-                var (childA, childB) = ChromosomeFactory.CreateOffSpringChromosomes(tuple.Item1, tuple.Item2, _crossOverOfset);
+                var (childA, childB) = ChromosomeFactory.CreateOffSpringChromosomes(tuple.Item1, tuple.Item2, _crossOverOffset);
                 children.Add(childA);
                 children.Add(childB);
             }
