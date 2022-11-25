@@ -19,7 +19,7 @@ namespace GeneticAlgorithm.Core
                 // var randomValue = Math.Abs(seedRandom.Next(0, 2) - randomGenerator.Next(0, 2));
                 // Generate a gene with value 0 or 1 with passed tag
                 genes.Add(new GenomeModel((short)randomGenerator.Next(0, 2)));
-                Thread.Sleep(25);
+                Thread.Sleep(1);
             }
             return new ChromosomeModel(genes);
         }
@@ -72,7 +72,7 @@ namespace GeneticAlgorithm.Core
                 {
                     gene.Value = (short)(1 - gene.Value);
                 }
-                Thread.Sleep(25);
+                Thread.Sleep(1);
             }
         }
 
