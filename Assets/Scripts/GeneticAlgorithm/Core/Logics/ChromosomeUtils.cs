@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace GeneticCore.Logics
+namespace GeneticAlgorithm.Core
 {
     public static class ChromosomeUtils
     {

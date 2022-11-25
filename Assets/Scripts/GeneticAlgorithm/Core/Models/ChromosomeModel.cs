@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace GeneticCore
+namespace GeneticAlgorithm.Core
 {
-    public class ChromosomeModel
+    public class ChromosomeModel : IComparer<ChromosomeModel>
     {
         public readonly Dictionary<string, GenomeModel> Data;
         public int Score;
-        
+
         public ChromosomeModel(List<GenomeModel> genomeModels)
         {
             Data = new Dictionary<string, GenomeModel>();

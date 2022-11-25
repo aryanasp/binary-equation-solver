@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using GeneticCore.Logics;
+using GeneticAlgorithm;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace GeneticCore
+namespace GeneticAlgorithm.Core
 {
     [CreateAssetMenu(fileName = "GeneticCoreTests", menuName = "Tests/StructureTest", order = 0)]
     public class TestModel : ScriptableObject

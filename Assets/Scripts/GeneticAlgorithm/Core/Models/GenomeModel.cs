@@ -1,5 +1,5 @@
 ﻿
-namespace GeneticCore
+namespace GeneticAlgorithm.Core
 {
     public class GenomeModel
     {
