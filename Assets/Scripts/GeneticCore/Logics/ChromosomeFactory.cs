@@ -48,7 +48,7 @@ namespace GeneticCore.Logics
             {
                 if (index >= startIndex && index <= endIndex)
                 {
-                    keyPairValues.Value.Value = 1 - keyPairValues.Value.Value;
+                    keyPairValues.Value.Value = (short)(1 - keyPairValues.Value.Value);
                 }
 
                 index += 1;

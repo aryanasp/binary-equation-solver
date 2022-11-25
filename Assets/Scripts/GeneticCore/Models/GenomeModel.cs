@@ -4,9 +4,9 @@ namespace GeneticCore
     public class GenomeModel
     {
         public string Tag;
-        public int Value;
+        public short Value;
         
-        public GenomeModel(string tag, int value)
+        public GenomeModel(string tag, short value)
         {
             Tag = tag;
             Value = value;
