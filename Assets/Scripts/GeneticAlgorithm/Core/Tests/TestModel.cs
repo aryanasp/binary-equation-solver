@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using DefaultNamespace;
 using GeneticAlgorithm.Core.Evaluators;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -12,10 +14,18 @@ namespace GeneticAlgorithm.Core
         [Button]
         public void DoTests()
         {
-            Test1ChangingOneGeneValuesShouldNotChangeOthers();
-            Test2LinqSelect();
+            var geneticAlgorithm = new GeneticAlgorithm(4, 4, new CustomEvaluator());
+            var result = geneticAlgorithm.RunAlgorithm();
+            
         }
-        
+
+        [Button]
+        public void ResetContainer()
+        {
+            Container.EvaluatorController = null;
+            Container.PopulationManager = null;
+        }
+
         private void Test1ChangingOneGeneValuesShouldNotChangeOthers()
         {
         }
