@@ -6,10 +6,10 @@ namespace GeneticAlgorithm.Core.Evaluators
     {
         public Evaluator()
         {
-            // if (Container.Evaluator != null)
-            // {
-            //     throw new Exception("There Is Two Evaluator Please Destroy One Of Them!");
-            // }
+            if (Container.Evaluator != null)
+            {
+                throw new Exception("There Is Two Evaluator Please Destroy One Of Them!");
+            }
             Container.InjectEvaluator(this);
         }
         
