@@ -33,6 +33,7 @@ namespace GeneticAlgorithm
         public List<short> RunAlgorithm()
         {
             var winnerChromosome = Container.PopulationManager.Build();
+            winnerChromosome.PrintData();
             return winnerChromosome.Data.Select(item => item.Value).ToList();
         }
     }

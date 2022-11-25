@@ -4,11 +4,25 @@ using UnityEngine;
 
 namespace GeneticAlgorithm.Core
 {
-    public class ChromosomeModel : IComparer<ChromosomeModel>
+    public class ChromosomeComparer : IComparer<ChromosomeModel>
+    {
+        public ChromosomeComparer()
+        {
+            
+        }
+        public int Compare(ChromosomeModel x, ChromosomeModel y)
+        {
+            if (ReferenceEquals(x, y)) return 0;
+            if (ReferenceEquals(null, y)) return 1;
+            if (ReferenceEquals(null, x)) return -1;
+            return x.Score.CompareTo(y.Score);
+        }
+    }
+    public class ChromosomeModel : IComparable<ChromosomeModel>
     {
         public readonly List<GenomeModel> Data;
         public int Score;
-
+        
         public ChromosomeModel(List<GenomeModel> genomeModels)
         {
             Data = new List<GenomeModel>();
@@ -33,12 +47,11 @@ namespace GeneticAlgorithm.Core
             Debug.Log(line);
         }
 
-        public int Compare(ChromosomeModel x, ChromosomeModel y)
+        public int CompareTo(ChromosomeModel other)
         {
-            if (ReferenceEquals(x, y)) return 0;
-            if (ReferenceEquals(null, y)) return 1;
-            if (ReferenceEquals(null, x)) return -1;
-            return x.Score.CompareTo(y.Score);
+            if (ReferenceEquals(this, other)) return 0;
+            if (ReferenceEquals(null, other)) return 1;
+            return Score.CompareTo(other.Score);
         }
     }
 }

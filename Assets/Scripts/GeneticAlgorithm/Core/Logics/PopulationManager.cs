@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using UnityEngine;
+using Random = System.Random;
 
 namespace GeneticAlgorithm.Core
 {
@@ -10,28 +12,38 @@ namespace GeneticAlgorithm.Core
         private SortedSet<ChromosomeModel> _population;
         private HashSet<ChromosomeModel> _deadChromosomesPool;
         private int _societySize;
-        
+
         private int _pairFactor = 1;
         private float _crossOverOffset = 0.5f;
         private float _mutationChance = 0.1f;
         private float _genomeMutateChance = 0.5f;
+
         public PopulationManager(int chromosomesGeneCount, int peopleCount)
         {
             if (Container.PopulationManager != null)
             {
                 throw new Exception("There Is Two Population Manager Please Destroy One Of Them!");
             }
+
             Container.InjectPopulationManager(this);
             _societySize = peopleCount;
-            _population = new SortedSet<ChromosomeModel>();
+            _population = new SortedSet<ChromosomeModel>(new ChromosomeComparer());
             _deadChromosomesPool = new HashSet<ChromosomeModel>();
-            for (int i = 0; i < _societySize; i++)
+            Debug.Log("Society: ");
+            while (_population.Count < _societySize)
             {
                 var newChromosome = ChromosomeFactory.CreateRandomChromosome(chromosomesGeneCount);
                 //This part should replace with fitness function
-                newChromosome.SetScore(i);
+                Container.EvaluatorController.EvaluateChromosome(newChromosome);
+                newChromosome.PrintData();
                 _population.Add(newChromosome);
             }
+
+            Debug.Log("Max: ");
+            _population.Max.PrintData();
+            Debug.Log("Min: ");
+            _population.Min.PrintData();
+            Debug.Log($"Population: {_population.Count}");
         }
 
         public PopulationManager SetPairFactor(int pairFactor)
@@ -40,6 +52,7 @@ namespace GeneticAlgorithm.Core
             {
                 throw new Exception("[PopulationManager]: Count Of Pairs Cant Be More Than Half Size Of Society.");
             }
+
             _pairFactor = pairFactor;
             return this;
         }
@@ -54,7 +67,7 @@ namespace GeneticAlgorithm.Core
             _mutationChance = mutationChance;
             return this;
         }
-        
+
         public PopulationManager SetGenomeMutationChance(float genomeMutationChance)
         {
             if (genomeMutationChance >= 1f)
@@ -76,11 +89,12 @@ namespace GeneticAlgorithm.Core
             _crossOverOffset = crossOverOffset;
             return this;
         }
-        
+
         public ChromosomeModel Build()
         {
             while (true)
             {
+                Debug.Log($"Population: {_population.Count}");
                 var selects = Select();
                 var children = CrossOver(selects);
                 var result = Mutate(children);
@@ -89,8 +103,12 @@ namespace GeneticAlgorithm.Core
                 {
                     break;
                 }
-                AddToPopulation(evaluatedChildren);
-                KillWeakChromosomes();
+
+                var newAddedChromosomes = AddToPopulation(evaluatedChildren);
+                for (int i = 0; i < newAddedChromosomes; i++)
+                {
+                    KillWeakerChromosome();
+                }
             }
 
             return _population.Max;
@@ -102,6 +120,7 @@ namespace GeneticAlgorithm.Core
             {
                 return false;
             }
+
             var allWereInDeadPool = true;
             foreach (var child in newGeneration)
             {
@@ -113,30 +132,32 @@ namespace GeneticAlgorithm.Core
                         isChildRepeat = true;
                     }
                 }
+
                 allWereInDeadPool = allWereInDeadPool && isChildRepeat;
             }
+
             return allWereInDeadPool;
         }
 
-        private void AddToPopulation(List<ChromosomeModel> evaluatedChildren)
+        private int AddToPopulation(List<ChromosomeModel> evaluatedChildren)
         {
+            var populationCount = _population.Count;
             foreach (var child in evaluatedChildren)
             {
                 _population.Add(child);
             }
+
+            return _population.Count - populationCount;
         }
 
-        private void KillWeakChromosomes()
+        private void KillWeakerChromosome()
         {
-            for (int i = 0; i < _pairFactor * 2; i++)
+            var min = _population.Min;
+            _deadChromosomesPool.Add(min);
+            var performed = _population.Remove(min);
+            if (!performed)
             {
-                var min = _population.Min;
-                _deadChromosomesPool.Add(min);
-                var performed = _population.Remove(min);
-                if (!performed)
-                {
-                    throw new Exception("Can't Delete Item From Sorted List!");
-                }
+                throw new Exception("Can't Delete Item From Sorted List!");
             }
         }
 
@@ -152,6 +173,7 @@ namespace GeneticAlgorithm.Core
             {
                 child.MutateChromosome(_genomeMutateChance);
             }
+
             return children;
         }
 
@@ -160,7 +182,8 @@ namespace GeneticAlgorithm.Core
             var children = new List<ChromosomeModel>();
             foreach (var tuple in selects)
             {
-                var (childA, childB) = ChromosomeFactory.CreateOffSpringChromosomes(tuple.Item1, tuple.Item2, _crossOverOffset);
+                var (childA, childB) =
+                    ChromosomeFactory.CreateOffSpringChromosomes(tuple.Item1, tuple.Item2, _crossOverOffset);
                 children.Add(childA);
                 children.Add(childB);
             }
@@ -181,16 +204,18 @@ namespace GeneticAlgorithm.Core
                 var tuple = new Tuple<ChromosomeModel, ChromosomeModel>(parent1, parent2);
                 outputList.Add(tuple);
             }
+
             return outputList;
         }
 
         private SortedSet<ChromosomeModel> ShallowClonePopulation()
         {
             var newSortedList = new SortedSet<ChromosomeModel>();
-            foreach (var chromosomeModel in newSortedList)
+            foreach (var chromosomeModel in _population)
             {
                 newSortedList.Add(chromosomeModel);
             }
+
             return newSortedList;
         }
     }
