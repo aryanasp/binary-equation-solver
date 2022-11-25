@@ -6,11 +6,11 @@ namespace GeneticAlgorithm.Core
 {
     public static class ChromosomeFactory
     {
-        public static ChromosomeModel CreateRandomChromosome(List<string> tags)
+        public static ChromosomeModel CreateRandomChromosome(int genesCount)
         {
             List<GenomeModel> genes = new List<GenomeModel>();
             var randomGenerator = new Random();
-            for (int i = 0; i < tags.Count; i++)
+            for (int i = 0; i < genesCount; i++)
             {
                 // Generate a gene with value 0 or 1 with passed tag
                 genes.Add(new GenomeModel((short)randomGenerator.Next(0, 2)));

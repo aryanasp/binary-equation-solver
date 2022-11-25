@@ -4,7 +4,7 @@ namespace GeneticAlgorithm.Core
 {
     public static class Container
     {
-        public static IEvaluator Evaluator;
+        public static EvaluatorController EvaluatorController;
         public static PopulationManager PopulationManager;
 
         public static void InjectPopulationManager(PopulationManager populationManager)
@@ -12,9 +12,9 @@ namespace GeneticAlgorithm.Core
             PopulationManager = populationManager;
         }
 
-        public static void InjectEvaluator(IEvaluator evaluator)
+        public static void InjectEvaluatorController(EvaluatorController evaluatorController)
         {
-            Evaluator = evaluator;
+            EvaluatorController = evaluatorController;
         }
     }
 }

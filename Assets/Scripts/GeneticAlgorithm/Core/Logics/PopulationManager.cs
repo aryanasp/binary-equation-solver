@@ -15,7 +15,7 @@ namespace GeneticAlgorithm.Core
         private float _crossOverOffset = 0.5f;
         private float _mutationChance = 0.1f;
         private float _genomeMutateChance = 0.5f;
-        public PopulationManager(List<string> tags, int peopleCount)
+        public PopulationManager(int chromosomesGeneCount, int peopleCount)
         {
             if (Container.PopulationManager != null)
             {
@@ -27,7 +27,7 @@ namespace GeneticAlgorithm.Core
             _deadChromosomesPool = new HashSet<ChromosomeModel>();
             for (int i = 0; i < _societySize; i++)
             {
-                var newChromosome = ChromosomeFactory.CreateRandomChromosome(tags);
+                var newChromosome = ChromosomeFactory.CreateRandomChromosome(chromosomesGeneCount);
                 //This part should replace with fitness function
                 newChromosome.SetScore(i);
                 _population.Add(newChromosome);
@@ -106,9 +106,12 @@ namespace GeneticAlgorithm.Core
             foreach (var child in newGeneration)
             {
                 var isChildRepeat = false;
-                foreach (var deadAncestors in _deadChromosomesPool.Where(deadAncestors => child.EqualWith(deadAncestors)))
+                foreach (var deadAncestors in _deadChromosomesPool)
                 {
-                    isChildRepeat = true;
+                    if (child.EqualWith(deadAncestors))
+                    {
+                        isChildRepeat = true;
+                    }
                 }
                 allWereInDeadPool = allWereInDeadPool && isChildRepeat;
             }
@@ -128,6 +131,7 @@ namespace GeneticAlgorithm.Core
             for (int i = 0; i < _pairFactor * 2; i++)
             {
                 var min = _population.Min;
+                _deadChromosomesPool.Add(min);
                 var performed = _population.Remove(min);
                 if (!performed)
                 {
@@ -136,9 +140,9 @@ namespace GeneticAlgorithm.Core
             }
         }
 
-        private static List<ChromosomeModel> EvaluateFitnessFunction(List<ChromosomeModel> result)
+        private List<ChromosomeModel> EvaluateFitnessFunction(List<ChromosomeModel> result)
         {
-            return result.Select(Container.Evaluator.EvaluateChromosome).ToList();
+            return result.Select(Container.EvaluatorController.EvaluateChromosome).ToList();
         }
 
         private List<ChromosomeModel> Mutate(List<ChromosomeModel> children)
