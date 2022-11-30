@@ -5,7 +5,7 @@ namespace DefaultNamespace.EquationParser
 {
     public static class ParserMemory
     {
-        private static Dictionary<string, VariableModel> Parameters;
+        public static Dictionary<string, VariableModel> Parameters;
         private static Dictionary<string, int> CompilersId;
         private static List<EquationCompiler> Compilers;
 
@@ -71,7 +71,7 @@ namespace DefaultNamespace.EquationParser
         {
             for (int i = 0; i < Compilers.Count; i++)
             {
-                Compilers[i].ResetCompileMemory();
+                Compilers[i].ResetLexMemory();
             }
         }
         

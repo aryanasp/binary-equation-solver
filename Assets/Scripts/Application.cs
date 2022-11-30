@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using DefaultNamespace.EquationParser;
 using GeneticAlgorithm.Core;
 using GeneticAlgorithm.Core.Evaluators;
 using TMPro;
@@ -11,23 +13,55 @@ namespace DefaultNamespace
     {
 
         public TMP_InputField inputField;
-        public TextMeshProUGUI result;
-        
+        public TextMeshProUGUI resultText;
 
+        private EquationCompiler _equationCompiler;
+        
         public void FindButton()
         {
-            var input = inputField.text;
-            
+            ResetApplication();
+            InitializeCompiler();
+            var tags = _equationCompiler.FindParameters();
+            var geneticAlgorithm = new GeneticAlgorithm.GeneticAlgorithm(tags.Count, tags.Count, this);
+            var results = geneticAlgorithm.RunAlgorithm();
+            DisplayOutputs(results);
         }
-        
+
+        private void DisplayOutputs(List<short> results)
+        {
+            var index = 0;
+            resultText.text = "";
+            foreach (var elements in ParserMemory.Parameters)
+            {
+                elements.Value.Value = results[index];
+                resultText.text += $"{elements.Value.Tag}: {elements.Value.Value}, ";
+            }
+        }
+
+        private void InitializeCompiler()
+        {
+            var input = inputField.text;
+            _equationCompiler = new EquationCompiler(input);
+            _equationCompiler.Lex();
+        }
+
+        private void ResetApplication()
+        {
+            ParserMemory.ResetMemory();
+            _equationCompiler = null;
+        }
+
         public int EvaluateChromosome(ChromosomeModel chromosomeModel)
         {
             var data = chromosomeModel.Data;
-            var x = data[0].Value;
-            var y = data[1].Value;
-            var z = data[2].Value;
-            var w = data[3].Value;
-            return 0 - (int)Math.Abs((17) + (Math.Pow(x, 3)) + (Math.Pow(x, 3) * Math.Pow(y, 2)) - (2 * Math.Pow(y, 3) * Math.Pow(z, 2)) - (19 * w * Math.Pow(x, 2)));
+            int index = 0;
+            foreach (var elements in ParserMemory.Parameters)
+            {
+                elements.Value.Value = data[index].Value;
+                index++;
+            }
+            _equationCompiler.ResetCompileMemory();
+            return 0 - Math.Abs(_equationCompiler.Compile());
         }
 
         public int GetOptimumValueToStopSooner()

@@ -17,8 +17,15 @@ namespace GeneticAlgorithm
     {
         public GeneticAlgorithm(int chromosomesGeneCount, int initialPeopleCount, IEvaluator evaluator)
         {
+            ResetContainer();
             var evaluatorController = new EvaluatorController(evaluator);
             var populationManager = new PopulationManager(chromosomesGeneCount, initialPeopleCount);
+        }
+
+        private void ResetContainer()
+        {
+            Container.EvaluatorController = null;
+            Container.PopulationManager = null;
         }
 
         public GeneticAlgorithm SetGeneticAlgorithmStructuralParameters(GeneticAlgorithmInfo info)

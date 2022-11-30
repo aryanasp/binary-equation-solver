@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace DefaultNamespace.EquationParser
 {
@@ -28,10 +29,12 @@ namespace DefaultNamespace.EquationParser
         public int CompileAnswer = 0;
 
         private List<string> _lexedStringTokens;
+        private List<string> _parameters;
 
         public EquationCompiler(string input)
         {
             Input = StandardizeInput(input);
+            _parameters = new List<string>();
             _lexedStringTokens = new List<string>();
         }
 
@@ -157,6 +160,35 @@ namespace DefaultNamespace.EquationParser
             }
         }
 
+        public List<string> FindParameters()
+        {
+            var parameters = new List<string>();
+            if (_lexedStringTokens.Count == 0)
+            {
+                throw new Exception("First Lex Compiler Input");
+            }
+            foreach (var token in _lexedStringTokens)
+            {
+                if (token[0] == '@')
+                {
+                    parameters.Add(token.Substring(1));
+                }
+
+                if (token[0] == '$')
+                {
+                    var id = int.Parse(token.Substring(1));
+                    var compiler = ParserMemory.GetCompilerWithId(id);
+                    var subParameters = compiler.FindParameters();
+                    parameters.AddRange(subParameters);
+                }
+            }
+            foreach (var parameter in parameters)
+            {
+                ParserMemory.AddParameter(parameter);
+            }
+            return parameters;
+        }
+
         public int Compile()
         {
             if (IsCompiledOnce)
@@ -240,7 +272,6 @@ namespace DefaultNamespace.EquationParser
                     }
                 }
             }
-
             if (calculationStack.Count != 1)
             {
                 throw new Exception("Stack Should Not Have More Than 1 Or Less Than 1 Elements!");
@@ -249,6 +280,15 @@ namespace DefaultNamespace.EquationParser
             CompileAnswer = calculationStack.Pop();
             IsCompiledOnce = true;
             return CompileAnswer;
+        }
+
+        private static void StackReport(Stack<int> calculationStack)
+        {
+            var stackReport = "Stack Report => ";
+            foreach (var element in calculationStack)
+            {
+                stackReport += $" {element} ";
+            }
         }
     }
 }
