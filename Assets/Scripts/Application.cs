@@ -1,11 +1,25 @@
 ﻿using System;
 using GeneticAlgorithm.Core;
 using GeneticAlgorithm.Core.Evaluators;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace DefaultNamespace
 {
-    public class CustomEvaluator : IEvaluator
+    public class Application : MonoBehaviour, IEvaluator
     {
+
+        public TMP_InputField inputField;
+        public TextMeshProUGUI result;
+        
+
+        public void FindButton()
+        {
+            var input = inputField.text;
+            
+        }
+        
         public int EvaluateChromosome(ChromosomeModel chromosomeModel)
         {
             var data = chromosomeModel.Data;

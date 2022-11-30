@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 267ac8147c764719b9988aadbbc4fad0, type: 3}
   m_Name: Test
   m_EditorClassIdentifier: 
-  input: -10 / 0
+  input: 2 + 3 * (4 + 2 ^ (3 + 4))
