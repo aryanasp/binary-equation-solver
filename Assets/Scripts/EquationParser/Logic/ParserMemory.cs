@@ -5,14 +5,12 @@ namespace DefaultNamespace.EquationParser
 {
     public static class ParserMemory
     {
-        private static readonly Dictionary<string, VariableModel> Parameters;
-        private static readonly Dictionary<string, int> CompilersId;
-        private static readonly List<EquationCompiler> Compilers;
-        private static int _size;
+        private static Dictionary<string, VariableModel> Parameters;
+        private static Dictionary<string, int> CompilersId;
+        private static List<EquationCompiler> Compilers;
 
         static ParserMemory()
         {
-            _size = 0;
             Parameters = new Dictionary<string, VariableModel>();
             CompilersId = new Dictionary<string, int>();
             Compilers = new List<EquationCompiler>();
@@ -43,24 +41,43 @@ namespace DefaultNamespace.EquationParser
             {
                 return CompilersId[subEquation];
             }
-            CompilersId[subEquation] = _size;
             Compilers.Add(new EquationCompiler(subEquation));
-            Compilers[_size].Lex();
-            return _size++;
+            CompilersId[subEquation] = Compilers.Count - 1;
+            var index = Compilers.Count - 1;
+            Compilers[Compilers.Count - 1].Lex();
+            return index;
         }
 
         public static EquationCompiler GetCompilerWithId(int id)
         {
-            if (id >= _size)
+            if (id >= Compilers.Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
             return Compilers[id];
         }
-
+        
+        
+        public static void ResetMemory()
+        {
+            ResetLexers();
+            ResetCompilers();
+            Parameters = new Dictionary<string, VariableModel>();
+            CompilersId = new Dictionary<string, int>();
+            Compilers = new List<EquationCompiler>();
+        }
+        
+        public static void ResetLexers()
+        {
+            for (int i = 0; i < Compilers.Count; i++)
+            {
+                Compilers[i].ResetCompileMemory();
+            }
+        }
+        
         public static void ResetCompilers()
         {
-            for (int i = 0; i < _size; i++)
+            for (int i = 0; i < Compilers.Count; i++)
             {
                 Compilers[i].ResetCompileMemory();
             }

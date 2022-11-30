@@ -37,25 +37,38 @@ namespace DefaultNamespace.EquationParser
 
         private string StandardizeInput(string input)
         {
-            int i = 0;
-            var replaceToken = "";
+            var replaceStartToken = "";
             if ((input[0] == ' ' && input[1] == '-'))
             {
-                replaceToken = "0";
+                replaceStartToken = "0";
             }
 
             if (input[0] == '-')
             {
-                replaceToken = "0 ";
+                replaceStartToken = "0 ";
             }
 
-            return $"{replaceToken}{input}";
+            var replaceEndToken = "";
+            var lastIndex = input.Length - 1;
+            var thereIsEqualSignInTheEnd = (input[lastIndex] == ' ' && input[lastIndex - 1] == '=')
+                 || (input[lastIndex] == '=');
+            if (!thereIsEqualSignInTheEnd)
+            {
+                replaceEndToken = "=";
+            }
+            
+            return $"{replaceStartToken}{input}{replaceEndToken}";
         }
 
         public void ResetCompileMemory()
         {
             IsCompiledOnce = false;
             CompileAnswer = 0;
+        }
+        
+        public void ResetLexMemory()
+        {
+            _lexedStringTokens = new List<string>();
         }
 
         public void Lex()
@@ -67,8 +80,12 @@ namespace DefaultNamespace.EquationParser
             {
                 if (Input[i] == ' ')
                 {
-                    _lexedStringTokens.Add(currentToken);
-                    currentToken = "";
+                    if (currentToken != "")
+                    {
+                        _lexedStringTokens.Add(currentToken);
+                        currentToken = "";
+                    }
+
                     i++;
                     continue;
                 }
@@ -79,6 +96,7 @@ namespace DefaultNamespace.EquationParser
                     var parentheseToken = "";
                     while (depth > 0)
                     {
+                        i++;
                         if (Input[i] == '(')
                         {
                             depth++;
@@ -93,22 +111,30 @@ namespace DefaultNamespace.EquationParser
                         {
                             parentheseToken += Input[i];
                         }
-
-                        i++;
                     }
 
                     var id = ParserMemory.AssignId(parentheseToken);
                     _lexedStringTokens.Add($"${id}");
+                    i++;
+                    continue;
                 }
 
                 if (OperationsPriority.ContainsKey(Input[i]))
                 {
-                    _lexedStringTokens.Add(currentToken);
+                    if (currentToken != "")
+                    {
+                        _lexedStringTokens.Add(currentToken);
+                    }
                     currentToken = "";
                     var pops = operationStacks.Add(Input[i], OperationsPriority[Input[i]]);
                     for (int j = 0; j < pops.Count; j++)
                     {
                         _lexedStringTokens.Add(pops[j].ToString());
+                    }
+
+                    if (Input[i] == '=')
+                    {
+                        break;
                     }
                 }
                 else
@@ -127,12 +153,7 @@ namespace DefaultNamespace.EquationParser
 
                     currentToken += Input[i];
                 }
-
-                if (Input[i] == '=')
-                {
-                    _lexedStringTokens.Add(currentToken);
-                    break;
-                }
+                i++;
             }
         }
 
@@ -155,7 +176,8 @@ namespace DefaultNamespace.EquationParser
                 else if (token[0] == '$')
                 {
                     var id = int.Parse(token.Substring(1));
-                    var theValue = ParserMemory.GetCompilerWithId(id).Compile();
+                    var compiler = ParserMemory.GetCompilerWithId(id);
+                    var theValue = compiler.Compile();
                     calculationStack.Push(theValue);
                 }
                 else if (token[0] == '@')
@@ -177,8 +199,9 @@ namespace DefaultNamespace.EquationParser
                     else
                     {
                         var operationToken = token[0];
-                        var operand1 = calculationStack.Pop();
+                        // It Is Stack So First Second Operand Will Be Pop Out
                         var operand2 = calculationStack.Pop();
+                        var operand1 = calculationStack.Pop();
                         var result = 0;
                         switch (operationToken)
                         {
@@ -197,6 +220,7 @@ namespace DefaultNamespace.EquationParser
                                     result = operand1 > 0 ? int.MaxValue : int.MinValue;
                                     break;
                                 }
+
                                 result = (int)(operand1 / operand2);
                                 break;
                             case '^':
@@ -205,11 +229,13 @@ namespace DefaultNamespace.EquationParser
                                     result = 0;
                                     break;
                                 }
-                                result = (int) Math.Pow(operand1, operand2);
+
+                                result = (int)Math.Pow(operand1, operand2);
                                 break;
                             default:
                                 throw new Exception($"Operand {operationToken} Is Not Defined!");
                         }
+
                         calculationStack.Push(result);
                     }
                 }

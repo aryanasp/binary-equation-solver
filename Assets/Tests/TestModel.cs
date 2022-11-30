@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DefaultNamespace;
-using GeneticAlgorithm.Core.Evaluators;
+﻿using DefaultNamespace.EquationParser;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -11,12 +7,17 @@ namespace GeneticAlgorithm.Core
     [CreateAssetMenu(fileName = "GeneticCoreTests", menuName = "Tests/StructureTest", order = 0)]
     public class TestModel : ScriptableObject
     {
-        [Button]
+        public string input = "3*4+ 2*5=";
+        [Button] 
         public void DoTests()
         {
-            var geneticAlgorithm = new GeneticAlgorithm(4, 4, new CustomEvaluator());
-            var result = geneticAlgorithm.RunAlgorithm();
-            
+            ParserMemory.ResetMemory();
+            var compiler = new EquationCompiler(input);
+            compiler.Lex();
+            var res = compiler.Compile();
+            Debug.Log(res);
+            ParserMemory.ResetMemory();
+            compiler = null;
         }
 
         [Button]
