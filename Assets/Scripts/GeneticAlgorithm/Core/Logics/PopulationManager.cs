@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
-using Random = System.Random;
 
 namespace GeneticAlgorithm.Core
 {
@@ -173,8 +173,7 @@ namespace GeneticAlgorithm.Core
 
         private List<ChromosomeModel> Mutate(List<ChromosomeModel> children)
         {
-            var random = new Random();
-            foreach (var child in children.Where(child => random.NextDouble() > _mutationChance))
+            foreach (var child in children.Where(child => UnityEngine.Random.Range(0f, 1f) > _mutationChance))
             {
                 child.MutateChromosome(_genomeMutateChance);
             }

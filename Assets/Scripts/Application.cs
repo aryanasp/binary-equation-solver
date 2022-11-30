@@ -61,7 +61,8 @@ namespace DefaultNamespace
                 index++;
             }
             _equationCompiler.ResetCompileMemory();
-            return 0 - Math.Abs(_equationCompiler.Compile());
+            var evaluated = 0 - Math.Abs(_equationCompiler.Compile());
+            return evaluated;
         }
 
         public int GetOptimumValueToStopSooner()

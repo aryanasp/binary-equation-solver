@@ -160,9 +160,9 @@ namespace DefaultNamespace.EquationParser
             }
         }
 
-        public List<string> FindParameters()
+        public HashSet<string> FindParameters()
         {
-            var parameters = new List<string>();
+            var parameters = new HashSet<string>();
             if (_lexedStringTokens.Count == 0)
             {
                 throw new Exception("First Lex Compiler Input");
@@ -179,7 +179,10 @@ namespace DefaultNamespace.EquationParser
                     var id = int.Parse(token.Substring(1));
                     var compiler = ParserMemory.GetCompilerWithId(id);
                     var subParameters = compiler.FindParameters();
-                    parameters.AddRange(subParameters);
+                    foreach (var parameter in subParameters)
+                    {
+                        parameters.Add(parameter);
+                    }
                 }
             }
             foreach (var parameter in parameters)
